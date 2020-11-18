@@ -18,6 +18,8 @@ use PoPSitesWassup\FormMutations\MutationResolverBridges\AbstractFormComponentMu
 
 class GravityFormsComponentMutationResolverBridge extends AbstractFormComponentMutationResolverBridge
 {
+    public const HOOK_FORM_FIELDNAMES = __CLASS__ . ':form-fieldnames';
+
     public function __construct()
     {
         $hooksAPI = HooksAPIFacade::getInstance();
@@ -147,7 +149,7 @@ class GravityFormsComponentMutationResolverBridge extends AbstractFormComponentM
     {
         $hooksAPI = HooksAPIFacade::getInstance();
         return $hooksAPI->applyFilters(
-            'GD_DataLoad_ActionExecuter_GravityForms:fieldnames',
+            self::HOOK_FORM_FIELDNAMES,
             array(),
             $form_id
         );
