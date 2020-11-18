@@ -6,7 +6,7 @@ namespace PoPSitesWassup\GravityFormsMutations\MutationResolvers;
 
 use PoP\ComponentModel\MutationResolvers\AbstractMutationResolver;
 
-class GravityFormsMutationResolver extends AbstractMutationResolver
+class GravityFormsAddEntryToFormMutationResolver extends AbstractMutationResolver
 {
     /**
      * @return mixed

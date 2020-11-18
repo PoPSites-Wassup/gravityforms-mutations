@@ -13,10 +13,10 @@ use PoP\ComponentModel\QueryInputOutputHandlers\ResponseConstants;
 use PoP\ComponentModel\MutationResolvers\MutationResolverInterface;
 use PoP\ComponentModel\Facades\ModuleProcessors\ModuleProcessorManagerFacade;
 use PoP\ComponentModel\Facades\MutationResolution\MutationResolutionManagerFacade;
-use PoPSitesWassup\GravityFormsMutations\MutationResolvers\GravityFormsMutationResolver;
+use PoPSitesWassup\GravityFormsMutations\MutationResolvers\GravityFormsAddEntryToFormMutationResolver;
 use PoPSitesWassup\FormMutations\MutationResolverBridges\AbstractFormComponentMutationResolverBridge;
 
-class GravityFormsComponentMutationResolverBridge extends AbstractFormComponentMutationResolverBridge
+class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormComponentMutationResolverBridge
 {
     public const HOOK_FORM_FIELDNAMES = __CLASS__ . ':form-fieldnames';
 
@@ -53,7 +53,7 @@ class GravityFormsComponentMutationResolverBridge extends AbstractFormComponentM
 
     public function getMutationResolverClass(): string
     {
-        return GravityFormsMutationResolver::class;
+        return GravityFormsAddEntryToFormMutationResolver::class;
     }
 
     /**
