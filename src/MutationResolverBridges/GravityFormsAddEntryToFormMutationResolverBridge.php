@@ -140,7 +140,7 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
         // Since GF 1.9.44, they setup field $_POST[ 'is_submit_' . $form['id'] ] )
         // (in file plugins/gravityforms/form_display.php function validate)
         // So here re-create that field
-        if ($form_id = $_POST["gform_submit"]) {
+        if ($form_id = $_POST["gform_submit"] ?? null) {
             $_POST['is_submit_'.$form_id] = true;
         }
     }
@@ -157,14 +157,13 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
 
     public function maybeFillFields()
     {
-
         // Pre-populate values when the user is logged in
         // These are needed since implementing PoP where the user is always logged in, so we can't print the name/email
         // on the front-end anymore, instead fields PoP_Forms_Module_Processor_TextFormInputs::MODULE_FORMINPUT_NAME and PoP_Forms_Module_Processor_TextFormInputs::MODULE_FORMINPUT_EMAIL are
         // not visible when the user is logged in
         $vars = ApplicationState::getVars();
         if (\PoP_FormUtils::useLoggedinuserData() && $vars['global-userstate']['is-user-logged-in']) {
-            if ($form_id = $_POST["gform_submit"]) {
+            if ($form_id = $_POST["gform_submit"] ?? null) {
                 // Hook the fieldnames from the configuration
                 if ($fieldnames = $this->getFormFieldnames($form_id)) {
                     $user_id = $vars['global-userstate']['current-user-id'];
@@ -190,9 +189,8 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
 
     public function renameFields()
     {
-
         // We need to populate the $_POST using the input names needed by Gravity Forms
-        if ($form_id = $_POST["gform_submit"]) {
+        if ($form_id = $_POST["gform_submit"] ?? null) {
             // Hook the fieldnames from the configuration
             if ($fieldnames = $this->getFormFieldnames($form_id)) {
                 foreach ($fieldnames as $module_name => $gf_form_fieldname) {
@@ -211,11 +209,11 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
         if (PoP_Forms_ConfigurationUtils::captchaEnabled()) {
             $vars = ApplicationState::getVars();
             if (!(PoP_FormUtils::useLoggedinuserData() && $vars['global-userstate']['is-user-logged-in'])) {
-                if ($form_id = $_POST["gform_submit"]) {
+                if ($form_id = $_POST["gform_submit"] ?? null) {
                     // Check if there's a captcha sent along
                     $moduleprocessor_manager = ModuleProcessorManagerFacade::getInstance();
                     $captcha_name = $moduleprocessor_manager->getProcessor([PoP_Module_Processor_CaptchaFormInputs::class, PoP_Module_Processor_CaptchaFormInputs::MODULE_FORMINPUT_CAPTCHA])->getName([PoP_Module_Processor_CaptchaFormInputs::class, PoP_Module_Processor_CaptchaFormInputs::MODULE_FORMINPUT_CAPTCHA]);
-                    if ($captcha = $_POST[$captcha_name]) {
+                    if ($captcha = $_POST[$captcha_name] ?? null) {
                         // Validate the captcha. If it fails, remove the attr "gform_submit" from $_POST
                         $captcha_validation = GD_Captcha::validate($captcha);
                         if (GeneralUtils::isError($captcha_validation)) {
