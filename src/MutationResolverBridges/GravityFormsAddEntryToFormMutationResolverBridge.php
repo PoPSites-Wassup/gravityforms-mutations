@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PoPSitesWassup\GravityFormsMutations\MutationResolverBridges;
 
+use PoP\ComponentModel\MutationResolvers\MutationResolverInterface;
 use PoP\ComponentModel\Instances\InstanceManagerInterface;
 use PoP\ComponentModel\Misc\GeneralUtils;
 use PoP\ComponentModel\MutationResolution\MutationResolutionManagerInterface;
@@ -25,6 +26,7 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
         InstanceManagerInterface $instanceManager,
         MutationResolutionManagerInterface $mutationResolutionManager,
         protected UserTypeAPIInterface $userTypeAPI,
+        protected GravityFormsAddEntryToFormMutationResolver $gravityFormsAddEntryToFormMutationResolver,
     ) {
         parent::__construct(
             $hooksAPI,
@@ -59,9 +61,9 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
         }
     }
 
-    public function getMutationResolverClass(): string
+    public function getMutationResolver(): MutationResolverInterface
     {
-        return GravityFormsAddEntryToFormMutationResolver::class;
+        return $this->gravityFormsAddEntryToFormMutationResolver;
     }
 
     /**
@@ -70,21 +72,7 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
      */
     public function executeMutation(array &$data_properties): ?array
     {
-        // $mutationResolverClass = $this->getMutationResolverClass();
-        // /** @var MutationResolverInterface */
-        // $mutationResolver = $this->instanceManager->getInstance($mutationResolverClass);
-        // $form_data = $this->getFormData();
-        // $errorstrings = $errorcodes = array();
-        // if ($errors = $mutationResolver->validateErrors($form_data)) {
-        //     $errorType = $mutationResolver->getErrorType();
-        //     if ($errorType == ErrorTypes::DESCRIPTIONS) {
-        //         $errorstrings = $errors;
-        //     } elseif ($errorType == ErrorTypes::CODES) {
-        //         $errorcodes = $errors;
-        //     }
-        // }
-        // $execution_response = $mutationResolver->executeMutation($errorstrings, $errorcodes, $form_data);
-        $executed = parent::execute($data_properties);
+        $executed = parent::executeMutation($data_properties);
 
         $execution_response = $this->mutationResolutionManager->getResult($this);
 
@@ -207,15 +195,15 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
         // This is a workaround to validate the form which takes place in advance based on if the captcha is present or not
         // this is done now because GF sends the email at the beginning, this can't be postponed
         // Check only if the user is not logged in. When logged in, we never use the captcha
-        if (PoP_Forms_ConfigurationUtils::captchaEnabled()) {
+        if (\PoP_Forms_ConfigurationUtils::captchaEnabled()) {
             $vars = ApplicationState::getVars();
-            if (!(PoP_FormUtils::useLoggedinuserData() && $vars['global-userstate']['is-user-logged-in'])) {
+            if (!(\PoP_FormUtils::useLoggedinuserData() && $vars['global-userstate']['is-user-logged-in'])) {
                 if ($form_id = $_POST["gform_submit"] ?? null) {
                     // Check if there's a captcha sent along
-                    $captcha_name = $this->moduleProcessorManager->getProcessor([PoP_Module_Processor_CaptchaFormInputs::class, PoP_Module_Processor_CaptchaFormInputs::MODULE_FORMINPUT_CAPTCHA])->getName([PoP_Module_Processor_CaptchaFormInputs::class, PoP_Module_Processor_CaptchaFormInputs::MODULE_FORMINPUT_CAPTCHA]);
+                    $captcha_name = $this->moduleProcessorManager->getProcessor([\PoP_Module_Processor_CaptchaFormInputs::class, \PoP_Module_Processor_CaptchaFormInputs::MODULE_FORMINPUT_CAPTCHA])->getName([\PoP_Module_Processor_CaptchaFormInputs::class, \PoP_Module_Processor_CaptchaFormInputs::MODULE_FORMINPUT_CAPTCHA]);
                     if ($captcha = $_POST[$captcha_name] ?? null) {
                         // Validate the captcha. If it fails, remove the attr "gform_submit" from $_POST
-                        $captcha_validation = GD_Captcha::validate($captcha);
+                        $captcha_validation = \GD_Captcha::validate($captcha);
                         if (GeneralUtils::isError($captcha_validation)) {
                             // By unsetting this value in the $_POST, the email won't be processed by function RGForms::maybe_process_form
                             unset($_POST["gform_submit"]);
