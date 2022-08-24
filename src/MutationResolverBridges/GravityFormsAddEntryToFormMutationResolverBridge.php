@@ -37,6 +37,7 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
     }
     final protected function getUserTypeAPI(): UserTypeAPIInterface
     {
+        /** @var UserTypeAPIInterface */
         return $this->userTypeAPI ??= $this->instanceManager->getInstance(UserTypeAPIInterface::class);
     }
     final public function setGravityFormsAddEntryToFormMutationResolver(GravityFormsAddEntryToFormMutationResolver $gravityFormsAddEntryToFormMutationResolver): void
@@ -45,6 +46,7 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
     }
     final protected function getGravityFormsAddEntryToFormMutationResolver(): GravityFormsAddEntryToFormMutationResolver
     {
+        /** @var GravityFormsAddEntryToFormMutationResolver */
         return $this->gravityFormsAddEntryToFormMutationResolver ??= $this->instanceManager->getInstance(GravityFormsAddEntryToFormMutationResolver::class);
     }
 
@@ -83,8 +85,8 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
     }
 
     /**
-     * @param array<string, mixed> $data_properties
-     * @return array<string, mixed>
+     * @param array<string,mixed> $data_properties
+     * @return array<string,mixed>|null
      */
     public function executeMutation(array &$data_properties): ?array
     {
@@ -153,7 +155,10 @@ class GravityFormsAddEntryToFormMutationResolverBridge extends AbstractFormCompo
         }
     }
 
-    protected function getFormFieldnames($form_id)
+    /**
+     * @return string[]
+     */
+    protected function getFormFieldnames(int $form_id): array
     {
         return App::applyFilters(
             self::HOOK_FORM_FIELDNAMES,
